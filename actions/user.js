@@ -19,6 +19,6 @@ export const createUser = async (
     await User.create(userData);
     return userData
   } catch (error) {
-    console.log("DB issue");
+    console.log("DB issue",error);
   }
 };
