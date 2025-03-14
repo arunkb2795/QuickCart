@@ -57,7 +57,8 @@ export async function POST(req) {
 
   if (eventType === "user.created") {
     console.log("User created",evt.data);
-    // const { id, first_name, last_name, email_address, image_url } = evt?.data;
+    const { id, first_name, last_name, email_address, image_url } = evt?.data;
+    console.log("User created",id, first_name, last_name, email_address, image_url)
     // try {
     //   await createUser(id, first_name, last_name, email_address, image_url);
     //   return new Response("User is created", {
@@ -79,5 +80,5 @@ export async function POST(req) {
     console.log("User deleted");
   }
 
-  return new Response("Webhook received", { status: 200 });
+  return new Response(`Webhook received,${evt.data}`, { status: 200 });
 }
