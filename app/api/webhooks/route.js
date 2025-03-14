@@ -1,6 +1,6 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
-import { createUser } from "@/actions/user";
+import { createUser, deleteUser, updateUser } from "@/actions/user";
 
 export async function POST(req) {
   const SIGNING_SECRET = process.env.SIGNING_SECRET;
@@ -54,12 +54,8 @@ export async function POST(req) {
   console.log(`Received webhook with ID ${id} and event type of ${eventType}`);
   console.log("Webhook payload:", body);
 
-  console.log("DATA",evt.data);
-
   if (eventType === "user.created") {
-    console.log("User created",evt.data);
-    const { id, first_name, last_name, email_addresses, image_url } = evt?.data;
-    console.log("User created",id, first_name, last_name, email_addresses, image_url)
+    const { id, first_name, last_name, email_addresses, image_url } = evt.data;
     try {
       await createUser(id, first_name, last_name, email_addresses, image_url);
       return new Response("User is created", {
@@ -74,11 +70,33 @@ export async function POST(req) {
   }
 
   if (eventType === "user.updated") {
-    console.log("User created");
+    const { id, first_name, last_name, email_addresses, image_url } = evt.data;
+    try {
+      await updateUser(id, first_name, last_name, email_addresses, image_url);
+      return new Response("User details updated", {
+        status: 200,
+      });
+    } catch (error) {
+      console.log(error);
+      return new Response("Error updating user", {
+        status: 400,
+      });
+    }
   }
 
   if (eventType === "user.deleted") {
-    console.log("User deleted");
+    const { id } = evt.data;
+    try {
+      await deleteUser(id);
+      return new Response("User is deleted", {
+        status: 200,
+      });
+    } catch (error) {
+      console.log(error);
+      return new Response("Error deleting user", {
+        status: 400,
+      });
+    }
   }
 
   return new Response(`Webhook received,${evt.data}`, { status: 200 });
