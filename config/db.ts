@@ -12,6 +12,7 @@ async function connectDB() {
   }
 
   if (!cached.promise) {
+    console.log("MONGODB CONNECTED")
     const opts = {
       bufferCommands: false,
     };
