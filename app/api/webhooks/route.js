@@ -57,18 +57,18 @@ export async function POST(req) {
 
   if (eventType === "user.created") {
     console.log("User created");
-    async ({ event }) => {
-        const { id, first_name, last_name, email_address, image_url } = event.data;
-        const userData = {
-          _id: id,
-          name: `${first_name} ${last_name}`,
-          email: email_address[0].email_address,
-          imageUrl: image_url,
-        };
-        console.log({ id, first_name, last_name, email_address, image_url });
-        await connectDB();
-        await User.create(userData);
-      }
+    async () => {
+      const { id, first_name, last_name, email_address, image_url } = evt.data;
+      const userData = {
+        _id: id,
+        name: `${first_name} ${last_name}`,
+        email: email_address[0].email_address,
+        imageUrl: image_url,
+      };
+      console.log({ id, first_name, last_name, email_address, image_url });
+      await connectDB();
+      await User.create(userData);
+    };
   }
 
   if (eventType === "user.updated") {
