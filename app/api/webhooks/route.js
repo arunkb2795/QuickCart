@@ -1,8 +1,9 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
-import { WebhookEvent } from "@clerk/nextjs/server";
+import connectDB from "@/config/db";
+import User from "@/models/user";
 
-export async function POST(req: Request) {
+export async function POST(req) {
   const SIGNING_SECRET = process.env.SIGNING_SECRET;
 
   if (!SIGNING_SECRET) {
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
   const payload = await req.json();
   const body = JSON.stringify(payload);
 
-  let evt: WebhookEvent;
+  let evt;
 
   // Verify payload with headers
   try {
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
       "svix-id": svix_id,
       "svix-timestamp": svix_timestamp,
       "svix-signature": svix_signature,
-    }) as WebhookEvent;
+    });
   } catch (err) {
     console.error("Error: Could not verify webhook:", err);
     return new Response("Error: Verification error", {
@@ -56,6 +57,18 @@ export async function POST(req: Request) {
 
   if (eventType === "user.created") {
     console.log("User created");
+    async ({ event }) => {
+        const { id, first_name, last_name, email_address, image_url } = event.data;
+        const userData = {
+          _id: id,
+          name: `${first_name} ${last_name}`,
+          email: email_address[0].email_address,
+          imageUrl: image_url,
+        };
+        console.log({ id, first_name, last_name, email_address, image_url });
+        await connectDB();
+        await User.create(userData);
+      }
   }
 
   if (eventType === "user.updated") {
