@@ -1,5 +1,6 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
+import { createUser } from "@/actions/user";
 
 export async function POST(req) {
   const SIGNING_SECRET = process.env.SIGNING_SECRET;
@@ -57,19 +58,19 @@ export async function POST(req) {
 
   if (eventType === "user.created") {
     console.log("User created",evt.data);
-    const { id, first_name, last_name, email_address, image_url } = evt?.data;
-    console.log("User created",id, first_name, last_name, email_address, image_url)
-    // try {
-    //   await createUser(id, first_name, last_name, email_address, image_url);
-    //   return new Response("User is created", {
-    //     status: 200,
-    //   });
-    // } catch (error) {
-    //   console.log(error);
-    //   return new Response("Error creating user", {
-    //     status: 400,
-    //   });
-    // }
+    const { id, first_name, last_name, email_addresses, image_url } = evt?.data;
+    console.log("User created",id, first_name, last_name, email_addresses, image_url)
+    try {
+      await createUser(id, first_name, last_name, email_addresses, image_url);
+      return new Response("User is created", {
+        status: 200,
+      });
+    } catch (error) {
+      console.log(error);
+      return new Response("Error creating user", {
+        status: 400,
+      });
+    }
   }
 
   if (eventType === "user.updated") {
