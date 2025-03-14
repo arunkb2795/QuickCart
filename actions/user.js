@@ -1,4 +1,5 @@
 import connectDB from "@/config/db";
+import User from "@/models/user";
 
 export const createUser = async (
   id,
