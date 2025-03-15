@@ -14,6 +14,7 @@ export const createUser = async (
       name: `${first_name} ${last_name}`,
       email: email_addresses[0].email_address,
       imageUrl: image_url,
+      cartItems: {},
     };
     await connectDB();
     await User.create(userData);
@@ -35,6 +36,7 @@ export const updateUser = async (
       name: `${first_name} ${last_name}`,
       email: email_addresses[0].email_address,
       imageUrl: image_url,
+      cartItems: {},
     };
     await connectDB();
     await User.findByIdAndUpdate(id, userData);
@@ -43,13 +45,22 @@ export const updateUser = async (
   }
 };
 
-export const deleteUser = async (
-    id
-  ) => {
-    try {
-      await connectDB();
-      await User.findByIdAndDelete(id);
-    } catch (error) {
-      console.log("Error deleting user", error);
-    }
-  };
+export const deleteUser = async (id) => {
+  try {
+    await connectDB();
+    await User.findByIdAndDelete(id);
+  } catch (error) {
+    console.log("Error deleting user", error);
+  }
+};
+
+export const findUser = async (id) => {
+  try {
+    await connectDB();
+    const user = await User.findById(id);
+    return user;
+  } catch (error) {
+    console.log("Error finding user", error);
+    return null;
+  }
+};
