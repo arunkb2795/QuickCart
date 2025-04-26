@@ -16,12 +16,11 @@ const ProductList = () => {
   const fetchSellerProduct = async () => {
     if (user) {
       const token = await getToken();
-      const response = await axios.get("/api/product/list", {
+      const response = await axios.get("/api/product/seller-list", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log({ response });
       setProducts(response.data.products);
       setLoading(false);
     }

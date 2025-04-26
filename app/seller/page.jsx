@@ -34,13 +34,11 @@ const AddProduct = () => {
     try {
       if (user) {
         const token = await getToken();
-        console.log("token", token);
         const response = await axios.post("/api/product/add", formData, {
           headers: {
             Authorization: "Bearer " + token,
           },
         });
-        console.log(response);
         toast.success("Product added successfully");
       }
     } catch (error) {

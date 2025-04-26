@@ -11,7 +11,6 @@ export const AddProduct = async ({
   image,
   date,
 }) => {
-  console.log({ userId });
   try {
     const productData = {
       userId,

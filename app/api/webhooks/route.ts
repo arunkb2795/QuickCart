@@ -100,5 +100,20 @@ export async function POST(req:Request) {
     }
   }
 
+  if (eventType === "user.deleted") {
+    const { id } = evt.data;
+    try {
+      await deleteUser(id);
+      return new Response("User is deleted", {
+        status: 200,
+      });
+    } catch (error) {
+      console.log(error);
+      return new Response("Error deleting user", {
+        status: 400,
+      });
+    }
+  }
+
   return new Response(`Webhook received`, { status: 200 });
 }

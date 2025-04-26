@@ -25,7 +25,19 @@ export const AppContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
 
   const fetchProductData = async () => {
-    setProducts(productsDummyData);
+    try {
+      if (user) {
+        const token = await getToken();
+        const response = await axios.get("/api/product/list", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setProducts(response.data.products);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const fetchUserData = async () => {
@@ -43,7 +55,6 @@ export const AppContextProvider = (props) => {
           Authorization: "Bearer " + token,
         },
       });
-      console.log(response);
       if (response.data.success) {
         setUserData(response.data.data);
         setCartItems(response.data.data.cartItems);
@@ -66,6 +77,22 @@ export const AppContextProvider = (props) => {
       cartData[itemId] = 1;
     }
     setCartItems(cartData);
+    if (user) {
+      try {
+        const token = await getToken();
+        await axios.post(
+          "/api/cart/update",
+          { cartData },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } catch (error) {
+        toast.error(error.message);
+      }
+    }
   };
 
   const updateCartQuantity = async (itemId, quantity) => {
@@ -76,6 +103,22 @@ export const AppContextProvider = (props) => {
       cartData[itemId] = quantity;
     }
     setCartItems(cartData);
+    if (user) {
+      try {
+        const token = await getToken();
+        await axios.post(
+          "/api/cart/update",
+          { cartData },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } catch (error) {
+        toast.error(error.message);
+      }
+    }
   };
 
   const getCartCount = () => {
@@ -93,7 +136,7 @@ export const AppContextProvider = (props) => {
     for (const items in cartItems) {
       let itemInfo = products.find((product) => product._id === items);
       if (cartItems[items] > 0) {
-        totalAmount += itemInfo.offerPrice * cartItems[items];
+        totalAmount += itemInfo?.offerPrice * cartItems[items];
       }
     }
     return Math.floor(totalAmount * 100) / 100;
@@ -101,7 +144,7 @@ export const AppContextProvider = (props) => {
 
   useEffect(() => {
     fetchProductData();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     setIsSeller(false);

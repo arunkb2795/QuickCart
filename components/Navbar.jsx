@@ -9,7 +9,6 @@ import Product from "@/app/product/[id]/page";
 
 const Navbar = () => {
   const { isSeller, router, user } = useAppContext();
-  console.log({ user });
 
   const { openSignIn } = useClerk();
 
